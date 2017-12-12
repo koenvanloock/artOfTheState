@@ -48,7 +48,7 @@ object RNG {
     case (i: Int, rng: RNG) => if (i < 0) (-1 * i, rng) else (i, rng)
   }
 
-  def double(rng: RNG): (Double, RNG) = {
+  def double: Rand[Double] = rng => {
 
     val (nominator, rng1) = nonNegativeInt(rng)
     (nominator / (Int.MaxValue.toDouble + 1), rng1)
@@ -104,4 +104,3 @@ case class SimpleRNG(seed: Long) extends RNG {
     (n, nextRNG)
   }
 }
-

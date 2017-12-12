@@ -4,36 +4,6 @@ trait RNG {
 }
 
 object RNG {
-  def badInts(count: Int)(rng: RNG) = if (count <= 0) {
-    (List(), rng)
-  } else {
-    val (x, r1) = rng.nextInt
-    val (xs, r2) = ints(count - 1)(r1)
-    (x :: xs, r2)
-  }
-
-  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
-    getInts(count)(Nil, rng)
-  }
-
-  def getInts(count: Int)(intsUntilNow: List[Int], rngNow: RNG): (List[Int], RNG) = {
-    count match {
-      case c: Int if (c == 0) => (intsUntilNow, rngNow)
-      case _ =>
-        val int = rngNow.nextInt
-        getInts(count - 1)(int._1 :: intsUntilNow, int._2)
-    }
-  }
-
-}
-
-case class SimpleRNG(seed: Long) extends RNG {
-  def nextInt: (Int, RNG) = {
-    val newSeed = (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
-    val nextRNG = SimpleRNG(newSeed)
-    val n = (newSeed >>> 16).toInt
-    (n, nextRNG)
-  }
 
   def nonNegativeInt(rng: RNG): (Int, RNG) = rng.nextInt match {
     case (Int.MinValue, rng: RNG) => (Int.MaxValue, rng)
@@ -65,4 +35,36 @@ case class SimpleRNG(seed: Long) extends RNG {
     val double3 = double(double2._2)
     ((double1._1, double2._1, double3._1), double3._2)
   }
+
+  def badInts(count: Int)(rng: RNG) = if (count <= 0) {
+    (List(), rng)
+  } else {
+    val (x, r1) = rng.nextInt
+    val (xs, r2) = ints(count - 1)(r1)
+    (x :: xs, r2)
+  }
+
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    getInts(count)(Nil, rng)
+  }
+
+  def getInts(count: Int)(intsUntilNow: List[Int], rngNow: RNG): (List[Int], RNG) = {
+    count match {
+      case c: Int if (c == 0) => (intsUntilNow, rngNow)
+      case _ =>
+        val int = rngNow.nextInt
+        getInts(count - 1)(int._1 :: intsUntilNow, int._2)
+    }
+  }
+}
+
+case class SimpleRNG(seed: Long) extends RNG {
+  def nextInt: (Int, RNG) = {
+    val newSeed = (seed * 0x5DEECE66DL + 0xBL) & 0xFFFFFFFFFFFFL
+    val nextRNG = SimpleRNG(newSeed)
+    val n = (newSeed >>> 16).toInt
+    (n, nextRNG)
+  }
+
+
 }

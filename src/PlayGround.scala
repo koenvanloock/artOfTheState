@@ -7,6 +7,11 @@ object PlayGround {
 
     println(SimpleRNG(5).nextInt)
 
-    println(ints(800990)(SimpleRNG(45678)))
+    println(ints(900)(SimpleRNG(45678)))
+
+    def rollDie: Rand[Int] = nonNegativeLessThan(6)
+
+    println(rollDie(SimpleRNG(5))._1)
+
   }
 }

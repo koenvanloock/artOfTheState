@@ -47,14 +47,15 @@ object RNG {
 
   def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
     getInts(count)(Nil, rng)
-  }
 
-  def getInts(count: Int)(intsUntilNow: List[Int], rngNow: RNG): (List[Int], RNG) = {
-    count match {
-      case c: Int if (c == 0) => (intsUntilNow, rngNow)
-      case _ =>
-        val int = rngNow.nextInt
-        getInts(count - 1)(int._1 :: intsUntilNow, int._2)
+
+    def getInts(count: Int)(intsUntilNow: List[Int], rngNow: RNG): (List[Int], RNG) = {
+      count match {
+        case c: Int if (c == 0) => (intsUntilNow, rngNow)
+        case _ =>
+          val int = rngNow.nextInt
+          getInts(count - 1)(int._1 :: intsUntilNow, int._2)
+      }
     }
   }
 }

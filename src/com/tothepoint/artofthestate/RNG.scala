@@ -1,3 +1,5 @@
+package com.tothepoint.artofthestate
+
 
 trait RNG {
   def nextInt: (Int, RNG)
@@ -7,13 +9,12 @@ object RNG {
 
   def nonNegativeInt(rng: RNG): (Int, RNG) = rng.nextInt match {
     case (Int.MinValue, rng: RNG) => (Int.MaxValue, rng)
-    case (i: Int, rng: RNG) => if (i < 0) (-1 * i, rng) else (i, rng)
+    case (generatedInt: Int, rng: RNG) => ((if (generatedInt < 0) -1  else 1) * generatedInt, rng)
   }
 
   def double(rng: RNG): (Double, RNG) = {
-
-    val (nominator, rng1) = nonNegativeInt(rng)
-    (nominator / (Int.MaxValue.toDouble + 1), rng1)
+    val (numerator, rng1) = nonNegativeInt(rng)
+    (numerator / (Int.MaxValue.toDouble + 1), rng1)
   }
 
 
@@ -36,11 +37,11 @@ object RNG {
     ((double1._1, double2._1, double3._1), double3._2)
   }
 
-  def badInts(count: Int)(rng: RNG) = if (count <= 0) {
+  def badInts(count: Int)(rng: RNG): (List[Int], RNG) = if (count <= 0) {
     (List(), rng)
   } else {
     val (x, r1) = rng.nextInt
-    val (xs, r2) = ints(count - 1)(r1)
+    val (xs, r2) = badInts(count - 1)(r1)
     (x :: xs, r2)
   }
 
@@ -65,6 +66,4 @@ case class SimpleRNG(seed: Long) extends RNG {
     val n = (newSeed >>> 16).toInt
     (n, nextRNG)
   }
-
-
 }

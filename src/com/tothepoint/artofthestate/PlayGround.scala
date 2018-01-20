@@ -1,3 +1,5 @@
+package com.tothepoint.artofthestate
+
 
 object PlayGround {
 
@@ -7,6 +9,7 @@ object PlayGround {
 
     println(SimpleRNG(5).nextInt)
 
+    //println(badInts(800990)(SimpleRNG(45678)))
     println(ints(800990)(SimpleRNG(45678)))
   }
 }

@@ -35,34 +35,33 @@ object RNG {
     sequence(List.fill(count)(_.nextInt))
 
 
-  def nonNegativeLessThan(boundary: Int): Rand[Int] = flatMap( nonNegativeInt){ i =>
-    val mod = i % boundary
-    if (i + (boundary-1) - mod >= 0) unit(mod) else nonNegativeLessThan(boundary)
+  def nonNegativeLessThan(boundary: Int): Rand[Int] = flatMap( nonNegativeInt){ int =>
+    val mod = int % boundary
+    if (mod >= 0) unit(mod) else nonNegativeLessThan(boundary)
   }
 
   def nonNegativeEven: Rand[Int] =
     map(nonNegativeInt)(i => i - i % 2)
 
-  def nonNegativeInt(rng: RNG): (Int, RNG) = rng.nextInt match {
+  def nonNegativeInt: Rand[Int] = rng => rng.nextInt match {
     case (Int.MinValue, rng: RNG) => (Int.MaxValue, rng)
     case (i: Int, rng: RNG) => if (i < 0) (-1 * i, rng) else (i, rng)
   }
 
   def double: Rand[Double] = rng => {
-
     val (nominator, rng1) = nonNegativeInt(rng)
     (nominator / (Int.MaxValue.toDouble + 1), rng1)
   }
 
 
-  def intDouble(rng: RNG): ((Int, Double), RNG) = {
+  def intDouble: Rand[(Int, Double)] = rng => {
     val intRng = rng.nextInt
     val rng2 = double(intRng._2)
     ((intRng._1, rng2._1), rng2._2)
   }
 
 
-  def doubleInt(rng: RNG): ((Double, Int), RNG) = {
+  def doubleInt: Rand[(Double, Int)] = rng => {
     val reversedTuple = intDouble(rng)
     ((reversedTuple._1._2, reversedTuple._1._1), reversedTuple._2)
   }

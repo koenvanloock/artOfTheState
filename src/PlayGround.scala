@@ -6,12 +6,16 @@ object PlayGround {
 
   def main(args: Array[String]): Unit = {
 
-    println(State[Unit, String](state => ("Hello", state))
-      .map(_ + " world!")
-      .run(())._1)
+    println(
+      State.unit[Unit, String]("Hello")
+        .map(_ + " world!")
+        .run(())
+        ._1
+    )
 
 
     val randomGenerator = State[RNG, Int](rng => rng.nextInt)
+    println("no params: "+ randomGenerator.run(SimpleRNG()))
 
     println(randomGenerator.run(SimpleRNG(2345678L)))
     println(randomGenerator.run(SimpleRNG(2345678L)))
@@ -38,5 +42,7 @@ object PlayGround {
 
     println(test.run(SimpleRNG(456789l)))
     println(test2.run(SimpleRNG(456789l)))
+
   }
+
 }
